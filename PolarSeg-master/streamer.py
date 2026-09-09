@@ -2,25 +2,20 @@ import asyncio
 import websockets
 import numpy as np
 import os
-from semantic_engine import SemanticFoveatedGrid # Ensure your previous code is saved as semantic_engine.py
+from semantic_engine import SemanticFoveatedGrid 
 
 BIN_DIR = os.path.join("data", "sequences", "11", "velodyne")
 LABEL_DIR = os.path.join("out", "SemKITTI_test", "sequences", "11", "predictions")
 
 def extract_cells(grid_dict, r_out):
-    """Converts matrix indices back to physical center coordinates (X, Y, Size, Label)."""
-    if not grid_dict: 
-        return np.empty((0, 4), dtype=np.float32)
-    
+    if not grid_dict: return np.empty((0, 4), dtype=np.float32)
     occupied = grid_dict["occupied"]
-    if not np.any(occupied): 
-        return np.empty((0, 4), dtype=np.float32)
+    if not np.any(occupied): return np.empty((0, 4), dtype=np.float32)
     
     cs = grid_dict["cs"]
     labels = grid_dict["labels"][occupied]
     i_idx, j_idx = np.where(occupied)
     
-    # Map index back to physical meters
     x = i_idx * cs - r_out + (cs / 2.0)
     y = j_idx * cs - r_out + (cs / 2.0)
     sizes = np.full_like(x, cs)
@@ -48,16 +43,18 @@ async def file_producer(queue):
                 all_cells.append(extract_cells(zone_data["bg"], r_out))
                 all_cells.append(extract_cells(zone_data["fg"], r_out))
             
-            # Combine all zones and send as raw bytes
-            payload = np.vstack(all_cells).tobytes()
-            await queue.put(payload)
+            # Pack 32-byte Telemetry Header + Cell Data
+            header = np.array(grids["averages"], dtype=np.float32).tobytes()
+            body = np.vstack(all_cells).astype(np.float32).tobytes()
+            
+            await queue.put(header + body)
             await asyncio.sleep(0.01)
 
 async def websocket_consumer(websocket, queue):
     try:
         while True:
             await websocket.send(await queue.get())
-            await asyncio.sleep(0.1) # 10 FPS
+            await asyncio.sleep(0.1) 
     except websockets.exceptions.ConnectionClosed:
         pass
 
@@ -65,9 +62,5 @@ async def handler(websocket):
     queue = asyncio.Queue(maxsize=50)
     await asyncio.gather(asyncio.create_task(file_producer(queue)), asyncio.create_task(websocket_consumer(websocket, queue)))
 
-async def main():
-    async with websockets.serve(handler, "localhost", 8765):
-        await asyncio.Future()  # Keeps the server running indefinitely
-
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(websockets.serve(handler, "localhost", 8765).serve_forever())
