@@ -77,7 +77,7 @@ async def websocket_consumer(websocket, queue):
     try:
         while True:
             await websocket.send(await queue.get())
-            await asyncio.sleep(0.01) 
+            await asyncio.sleep(0.001) 
     except websockets.exceptions.ConnectionClosed:
         pass
 

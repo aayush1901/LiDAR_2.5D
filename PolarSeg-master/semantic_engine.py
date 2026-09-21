@@ -11,7 +11,6 @@ class SemanticFoveatedGrid:
             {"id": 3, "r_in": 20.0, "r_out": 40.0, "bg_cs": 0.50, "fg_cs": 0.10}, 
             {"id": 4, "r_in": 40.0, "r_out": 100.0,"bg_cs": 1.00, "fg_cs": 1.00}, 
         ]
-        
         for z in self.zone_configs:
             z["bg_dim"] = int(np.round((2 * z["r_out"]) / z["bg_cs"]))
             z["fg_dim"] = int(np.round((2 * z["r_out"]) / z["fg_cs"]))
@@ -21,6 +20,7 @@ class SemanticFoveatedGrid:
 
     def _rasterize(self, x, y, z, labels, r_out, cs, dim, f_avg, b_avg):
         if len(x) == 0: return None
+
         i_idx = np.clip(np.floor((x + r_out) / cs).astype(np.int32), 0, dim - 1)
         j_idx = np.clip(np.floor((y + r_out) / cs).astype(np.int32), 0, dim - 1)
         flat_idx = i_idx * dim + j_idx
