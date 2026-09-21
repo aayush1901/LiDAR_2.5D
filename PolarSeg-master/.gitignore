@@ -1,32 +1,10 @@
-# 1. Datasets and Raw Point Clouds
 data/
-dataset/
-*.bin
-*.label
-poses.txt
-
-# 2. Model Weights and Checkpoints
+imgs/
+out/
 pretrained_weight/
 *.pt
 *.pth
 *.ckpt
 
-# 3. Generated Output and Predictions
-out/
-output/
-predictions/
-
-# 4. Python Environments and Cache
-_pycache_/
+__pycache__/
 *.pyc
-*.pyo
-*.pyd
-env/
-venv/
-.venv/
-
-# 5. OS and IDE generated files
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db

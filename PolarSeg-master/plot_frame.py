@@ -6,6 +6,7 @@ import os
 bin_path = r"data\sequences\11\velodyne\000000.bin"
 label_path = r"out\SemKITTI_test\sequences\11\predictions\000000.label" # Update if it's "semanticKitti"
 
+
 # 1. Load data
 points = np.fromfile(bin_path, dtype=np.float32).reshape(-1, 4)[:, :3]
 labels = np.fromfile(label_path, dtype=np.uint32) & 0xFFFF
