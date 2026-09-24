@@ -17,6 +17,11 @@ export default function App() {
   useEffect(() => { showCartesianRef.current = showCartesian; }, [showCartesian]);
   useEffect(() => { zoomRadiusRef.current = zoomRadius; }, [zoomRadius]);
 
+  // Set the document title to your project name
+  useEffect(() => {
+    document.title = "Project Sanjay";
+  }, []);
+
   const handleWheel = (e) => {
     setZoomRadius(prev => Math.max(10, Math.min(prev + (e.deltaY > 0 ? 5 : -5), 110)));
   };
@@ -147,7 +152,6 @@ export default function App() {
         }
       }
 
-      // Hard cap to prevent Canvas lagging during high noise scenes
       const maxTracks = Math.min(numTracks, 35);
 
       for (let t = 0; t < maxTracks; t++) {
@@ -182,7 +186,6 @@ export default function App() {
         ctx.stroke();
         
         const speedMs = Math.hypot(tvx, tvy) * 10;
-        
         const isApproaching = (tx * tvx + ty * tvy) < 0; 
         
         if (speedMs > 0.5 && isApproaching) {
@@ -235,7 +238,14 @@ export default function App() {
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh', background: 'radial-gradient(circle at center, #0a0e17 0%, #020203 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
       
-      <div style={{ position: 'absolute', top: '30px', left: '30px', width: '270px', background: 'linear-gradient(135deg, rgba(15, 17, 21, 0.9) 0%, rgba(20, 25, 35, 0.8) 100%)', backdropFilter: 'blur(16px)', border: '1px solid rgba(0, 229, 255, 0.2)', borderRadius: '16px', padding: '24px', boxShadow: '0 12px 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(0, 229, 255, 0.05)', zIndex: 100, color: '#e2e8f0', fontFamily: 'monospace' }}>
+      {/* Project Sanjay Logo & Title */}
+      <div style={{ position: 'absolute', top: '24px', left: '30px', display: 'flex', alignItems: 'center', gap: '12px', zIndex: 100, background: 'linear-gradient(135deg, rgba(15, 17, 21, 0.9) 0%, rgba(20, 25, 35, 0.8) 100%)', backdropFilter: 'blur(16px)', border: '1px solid rgba(0, 229, 255, 0.2)', borderRadius: '12px', padding: '12px 20px', boxShadow: '0 8px 24px rgba(0,0,0,0.6)' }}>
+        <img src="/favicon.svg" alt="Project Sanjay Logo" style={{ width: '28px', height: '28px', borderRadius: '6px' }} />
+        <h1 style={{ color: '#00e5ff', margin: 0, fontFamily: 'sans-serif', fontSize: '18px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase' }}>Project Sanjay</h1>
+      </div>
+
+      {/* Telemetry Left Panel (Moved down to accommodate the logo) */}
+      <div style={{ position: 'absolute', top: '90px', left: '30px', width: '200px', background: 'linear-gradient(135deg, rgba(15, 17, 21, 0.9) 0%, rgba(20, 25, 35, 0.8) 100%)', backdropFilter: 'blur(16px)', border: '1px solid rgba(0, 229, 255, 0.2)', borderRadius: '16px', padding: '24px', boxShadow: '0 12px 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(0, 229, 255, 0.05)', zIndex: 100, color: '#e2e8f0', fontFamily: 'monospace' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '12px', marginBottom: '18px' }}>
           <h3 style={{ color: '#fff', margin: 0, fontFamily: 'sans-serif', fontSize: '16px', fontWeight: '600' }}>Telemetry</h3>
           <span id="engine-fps" style={{ fontWeight: 'bold', background: 'rgba(0, 255, 170, 0.1)', padding: '4px 8px', borderRadius: '6px' }}>-- FPS</span>
@@ -254,8 +264,8 @@ export default function App() {
         ))}
       </div>
 
+      {/* Perception Controls & Efficiency Right Panel */}
       <div style={{ position: 'absolute', top: '30px', right: '30px', display: 'flex', flexDirection: 'column', gap: '20px', zIndex: 100 }}>
-        
         <div style={{ width: '280px', background: 'linear-gradient(135deg, rgba(15, 17, 21, 0.9) 0%, rgba(20, 25, 35, 0.8) 100%)', backdropFilter: 'blur(16px)', border: '1px solid rgba(0, 229, 255, 0.2)', borderRadius: '16px', padding: '24px', boxShadow: '0 12px 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(0, 229, 255, 0.05)', display: 'flex', flexDirection: 'column', gap: '18px' }}>
           <h3 style={{ color: '#fff', margin: 0, fontFamily: 'sans-serif', fontSize: '16px', fontWeight: '600', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '12px' }}>Perception Engine</h3>
           <div style={{ color: '#38bdf8', fontFamily: 'monospace', fontSize: '14px', background: 'rgba(56, 189, 248, 0.1)', padding: '8px 12px', borderRadius: '6px' }}>
@@ -285,10 +295,88 @@ export default function App() {
           <div id="perf-memory" style={{ color: '#e2e8f0', fontFamily: 'monospace', fontSize: '13px', marginBottom: '10px', background: 'rgba(0,0,0,0.3)', padding: '6px', borderRadius: '4px' }}>Payload: --</div>
           <div id="perf-latency" style={{ color: '#00ffaa', fontFamily: 'monospace', fontSize: '13px', background: 'rgba(0, 255, 170, 0.1)', padding: '6px', borderRadius: '4px', borderLeft: '2px solid #00ffaa' }}>Network Latency: --</div>
         </div>
+      </div>
+      {/* Color Classification Legend Box - Arranged in a single horizontal row at the bottom */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '16px',
+          left: '56%',
+          transform: 'translateX(-50%)',
+          maxWidth: 'calc(100vw - 80px)',
+          background: 'rgba(3, 10, 20, 0.92)',
+          border: '1.5px solid #1a4968',
+          borderRadius: '10px',
+          padding: '10px 16px',
+          boxSizing: 'border-box',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 229, 255, 0.08)',
+          display: 'flex',
+          flexWrap: 'nowrap',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '14px',
+          zIndex: 100,
+          fontFamily: "'Segoe UI', -apple-system, Roboto, sans-serif",
+          overflowX: 'auto',
+        }}
+      >
+        {/* Car / Truck / Bike */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+          <span style={{ width: '12px', height: '12px', backgroundColor: '#FF0000', display: 'inline-block', flexShrink: 0, borderRadius: '2px' }} />
+          <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: '500', whiteSpace: 'nowrap' }}>Car / Truck / Bike</span>
+        </div>
 
+        {/* Building */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+          <span style={{ width: '12px', height: '12px', backgroundColor: '#FFDD00', display: 'inline-block', flexShrink: 0, borderRadius: '2px' }} />
+          <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: '500', whiteSpace: 'nowrap' }}>Building</span>
+        </div>
+
+        {/* Pedestrian + Bicycle */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+          <span style={{ width: '12px', height: '12px', backgroundColor: '#0080FF', display: 'inline-block', flexShrink: 0, borderRadius: '2px' }} />
+          <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: '500', whiteSpace: 'nowrap' }}>Pedestrian + Bicycle</span>
+        </div>
+
+        {/* Road */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+          <span style={{ width: '12px', height: '12px', backgroundColor: '#9ea8b6', display: 'inline-block', flexShrink: 0, borderRadius: '2px' }} />
+          <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: '500', whiteSpace: 'nowrap' }}>Road</span>
+        </div>
+
+        {/* Vegetation */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+          <span style={{ width: '12px', height: '12px', backgroundColor: '#138808', display: 'inline-block', flexShrink: 0, borderRadius: '2px' }} />
+          <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: '500', whiteSpace: 'nowrap' }}>Vegetation</span>
+        </div>
+
+        {/* Pothole Candidate */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+          <span style={{ width: '12px', height: '12px', backgroundColor: '#00bfff', display: 'inline-block', flexShrink: 0, borderRadius: '2px' }} />
+          <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: '500', whiteSpace: 'nowrap' }}>Pothole Candidate</span>
+        </div>
+
+        {/* Curb */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+          <span style={{ width: '12px', height: '12px', backgroundColor: '#9b26ff', display: 'inline-block', flexShrink: 0, borderRadius: '2px' }} />
+          <span style={{ color: '#ffffff', fontSize: '11px', fontWeight: '500', whiteSpace: 'nowrap' }}>Curb</span>
+        </div>
       </div>
 
-      <canvas ref={canvasRef} width={CANVAS_SIZE} height={CANVAS_SIZE} onWheel={handleWheel} style={{ borderRadius: '50%', border: '2px solid rgba(0, 229, 255, 0.15)', transform: 'rotate(-90deg) scaleX(-1)', boxShadow: '0 0 100px rgba(0, 229, 255, 0.05)', cursor: 'ns-resize' }} />
+      {/* Main LiDAR 2.5D Canvas */}
+      <canvas 
+        ref={canvasRef} 
+        width={CANVAS_SIZE} 
+        height={CANVAS_SIZE} 
+        onWheel={handleWheel} 
+        style={{ 
+          borderRadius: '50%', 
+          border: '2px solid rgba(0, 229, 255, 0.15)', 
+          transform: 'rotate(-90deg) scaleX(-1)', 
+          boxShadow: '0 0 100px rgba(0, 229, 255, 0.05)', 
+          cursor: 'ns-resize' 
+        }} 
+      />
     </div>
   );
 }
